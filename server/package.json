@@ -1,0 +1,104 @@
+{
+  "name": "culture-booster-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "start:dev": "serverless offline start --httpPort=3333",
+    "format": "prettier --write \"./src/**/*.ts*\"",
+    "eslint": "eslint ./src --fix",
+    "lint": "yarn format && yarn eslint && yarn build",
+    "lint:ci": "eslint ./src && yarn build",
+    "test:dev": "cross-env IS_LOCAL_TEST=true jest --testTimeout=10000",
+    "test": "jest --testTimeout=10000",
+    "test:ci": "echo 'yarn test'",
+    "precommit": "yarn lint",
+    "prepush": "cross-env IS_LOCAL_TEST=true yarn test",
+    "create:sample": "node ./scripts/setup-fake-org.js",
+    "delete:sample": "node ./scripts/delete-fake-org.js",
+    "clean:freeze": "rimraf ./mode_modules/.cache",
+    "deploy": "serverless deploy --verbose --force --stage prod --region us-east-2"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.920.0",
+    "axios": "^0.21.1",
+    "lambda-api": "^0.10.7",
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@types/aws-lambda": "^8.10.72",
+    "@types/jest": "^26.0.22",
+    "@types/jsonwebtoken": "^8.5.2",
+    "@types/jwk-to-pem": "^2.0.0",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^14.14.25",
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-redux": "^7.1.16",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/redux-persist": "^4.3.1",
+    "@types/serverless": "^1.78.22",
+    "@types/supertest": "^2.0.10",
+    "@types/uuid": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "commitlint": "^11.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-formatter-pretty": "^4.0.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-unicorn": "^27.0.0",
+    "husky": "^5.0.9",
+    "jest": "^26.6.3",
+    "moment": "^2.29.1",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "serverless-bundle": "^4.2.2",
+    "serverless-domain-manager": "^5.1.0",
+    "serverless-dotenv-plugin": "^3.8.2",
+    "serverless-dynamodb-local": "^0.2.39",
+    "serverless-offline": "^8.1.0",
+    "supertest": "^6.1.3",
+    "ts-jest": "^26.5.4",
+    "typescript": "^4.2.3",
+    "unique-names-generator": "^4.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com:culturebooster/culture-booster-backend.git"
+  },
+  "homepage": "https://gitlab.com/culturebooster/culture-booster-backend#readme",
+  "babel": {
+    "env": {
+      "test": {
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs"
+        ]
+      }
+    }
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "src/(.*)": "<rootDir>/src/$1"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "test-helpers.ts"
+    ],
+    "preset": "ts-jest"
+  }
+}

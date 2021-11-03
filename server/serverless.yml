@@ -1,0 +1,66 @@
+app: newworld-wp
+service: newworld-wp
+
+# https://www.serverless.com/framework/docs/deprecations/#LOAD_VARIABLES_FROM_ENV_FILES
+useDotenv: true
+
+provider:
+  name: aws
+  profile: personal
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-2
+  environment:
+    STAGE: ${self:provider.stage}
+  # https://www.serverless.com/framework/docs/deprecations/#LAMBDA_HASHING_VERSION_V2
+  lambdaHashingVersion: 20201221
+  # https://www.serverless.com/framework/docs/deprecations/#AWS_API_GATEWAY_NAME_STARTING_WITH_SERVICE
+  apiGateway:
+    shouldStartNameWithService: true
+  # https://www.serverless.com/framework/docs/deprecations/#PROVIDER_IAM_SETTINGS
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "arn:aws:dynamodb:${self:provider.region}:712327324944:*"
+        - Effect: "Allow"
+          Action:
+            - cognito-idp:*
+          Resource: "*"
+
+package:
+  individually: true
+
+functions:
+  warV1:
+    handler: handler.warV1
+    events:
+      - http:
+          method: any
+          path: '/v1/war/{proxy+}'
+          cors: true
+  companyV1:
+    handler: handler.companyV1
+    events:
+      - http:
+          method: any
+          path: '/v1/company/{proxy+}'
+          cors: true
+
+plugins:
+  - serverless-bundle
+  - serverless-offline
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  bundle:
+    linting: false
+    packager: yarn
