@@ -31,13 +31,14 @@ import { CheckIn } from '../components/check-in'
 import { Admin } from '../components/admin'
 import { Help } from '../components/help-modal'
 
-import { useWarDetails } from '../hooks/useWarDetails'
+import { useWarDetails } from '../hooks/use-war-details'
 
 export const Preparation = () => {
   const { isLoading, data: warDetails } = useWarDetails()
   const [upcoming, setUpcoming] = useState([])
   const [past, setPast] = useState([])
 
+  // eslint-disable-next-line unicorn/no-null
   const [anchorEl, setAnchorEl] = useState(null)
 
   const [checkInOpen, setCheckInOpen] = useState(false)
@@ -91,6 +92,7 @@ export const Preparation = () => {
   }
 
   const handleClose = () => {
+    // eslint-disable-next-line unicorn/no-null
     setAnchorEl(null)
   }
 

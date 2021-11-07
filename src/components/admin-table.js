@@ -43,8 +43,10 @@ export const AdminTable = () => {
   const handleEdit = (id) => {
     setSelected(id)
   }
+
   const handleDelete = (id) => {
     // Delete
+    console.log(selected)
   }
 
   return (

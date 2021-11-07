@@ -17,7 +17,6 @@ export const Header = ({ openAdmin, openHelp }) => {
           >
             New World War Preparation
           </Typography>
-          
         </Toolbar>
       </AppBar>
       <Toolbar />

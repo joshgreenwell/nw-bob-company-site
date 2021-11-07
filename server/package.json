@@ -5,7 +5,7 @@
   "description": "",
   "scripts": {
     "start:dev": "serverless offline start --httpPort=3333",
-    "format": "prettier --write \"./src/**/*.ts*\"",
+    "format": "prettier --write \"./src/**/*.js*\"",
     "eslint": "eslint ./src --fix",
     "lint": "yarn format && yarn eslint && yarn build",
     "lint:ci": "eslint ./src && yarn build",

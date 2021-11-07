@@ -6,7 +6,7 @@ import DateAdapter from '@mui/lab/AdapterDateFns'
 import { LocalizationProvider } from '@mui/lab'
 import { Auth0Provider } from '@auth0/auth0-react'
 
-import App from './App'
+import App from './app'
 import reportWebVitals from './reportWebVitals'
 
 export const queryClient = new QueryClient()
@@ -34,7 +34,7 @@ ReactDOM.render(
         <QueryClientProvider client={queryClient}>
           <Auth0Provider
             domain="dev-a0dow-ii.us.auth0.com"
-            clientId="PYyQGHodMwqvgSESrzyvypEj0IKiE15R"
+            clientId={process.env.REACT_APP_AUTH0_KEY}
             redirectUri={window.location.origin}
           >
             <div
@@ -70,7 +70,7 @@ ReactDOM.render(
       </LocalizationProvider>
     </ThemeProvider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.querySelector('#root')
 )
 
 // If you want to start measuring performance in your app, pass a function

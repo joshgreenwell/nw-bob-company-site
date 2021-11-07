@@ -5,7 +5,7 @@ module.exports = {
     'jest',
     'promise',
     'unicorn',
-    "react-hooks"
+    'react-hooks'
   ],
   extends: [
     // 'airbnb-typescript/base',
@@ -19,7 +19,8 @@ module.exports = {
   env: {
     node: true,
     browser: true,
-    jest: true
+    jest: true,
+    es6: true
   },
   rules: {
     // Too restrictive, writing ugly code to defend against a very unlikely scenario: https://eslint.org/docs/rules/no-prototype-builtins
@@ -39,15 +40,20 @@ module.exports = {
     'unicorn/no-useless-undefined': 'off',
     'unicorn/no-nested-ternary': 'off',
     'unicorn/no-array-reduce': 'off',
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": [
-      "off", {
-        "additionalHooks": "useRecoilCallback|useRecoilTransaction_UNSTABLE"
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': [
+      'off',
+      {
+        additionalHooks: 'useRecoilCallback|useRecoilTransaction_UNSTABLE'
       }
     ]
   },
-  ignorePatterns: ['.eslintrc.js', '**/*.jsx', '**/*.js'],
+  ignorePatterns: ['.eslintrc.js', 'setupTests.js', 'reportWebVitals.js', '*.js'],
   parserOptions: {
-    project: './tsconfig.json'
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true
+    }
   }
 }

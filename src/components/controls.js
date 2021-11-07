@@ -13,7 +13,11 @@ export const Controls = () => {
         handleClose={() => setCreateOpen(false)}
       />
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button variant="contained" sx={{ width: '200px' }} onClick={() => setCreateOpen(true)}>
+        <Button
+          variant="contained"
+          sx={{ width: '200px' }}
+          onClick={() => setCreateOpen(true)}
+        >
           Create War
         </Button>
       </div>

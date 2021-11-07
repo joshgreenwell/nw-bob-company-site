@@ -96,7 +96,7 @@ export const CreateWarModal = ({ open, handleClose }) => {
         }}
       >
         {isLoading ? (
-          <Loader height='300px' />
+          <Loader height="300px" />
         ) : (
           <Stack spacing={2}>
             <FormControl fullWidth>
@@ -120,7 +120,9 @@ export const CreateWarModal = ({ open, handleClose }) => {
                 onChange={(e) => setWhere(e.target.value)}
               >
                 {locations.map((w) => (
-                  <MenuItem value={w} key={w}>{w}</MenuItem>
+                  <MenuItem value={w} key={w}>
+                    {w}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -134,7 +136,6 @@ export const CreateWarModal = ({ open, handleClose }) => {
               Create
             </Button>
           </Stack>
-        )}
         )}
       </Box>
     </Modal>

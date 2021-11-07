@@ -17,7 +17,10 @@ export const Help = ({ open, handleClose }) => {
         }}
       >
         <Stack spacing={2}>
-          <Typography color='textPrimary'>Please contact me using the below information for any support related questions or comments.</Typography>
+          <Typography color="textPrimary">
+            Please contact me using the below information for any support
+            related questions or comments.
+          </Typography>
           <Typography color="textPrimary">
             <b>IGN:</b> Juan Claude
           </Typography>

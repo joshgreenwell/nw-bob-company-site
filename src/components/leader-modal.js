@@ -28,7 +28,7 @@ export const LeaderModal = ({ open, handleClose }) => {
           width: 400,
           bgcolor: 'background.paper',
           boxShadow: 24,
-          p: 4,
+          p: 4
         }}
       >
         {isLoading ? (

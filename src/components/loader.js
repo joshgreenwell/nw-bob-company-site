@@ -10,7 +10,7 @@ export const Loader = ({ height = '80vh' }) => {
         display: 'flex'
       }}
     >
-      <CircularProgress />
+      <CircularProgress color="secondary" />
     </Box>
   )
 }

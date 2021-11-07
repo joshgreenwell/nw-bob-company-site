@@ -8,10 +8,15 @@ import {
   MenuItem,
   Select,
   InputLabel,
-  FormControl
+  FormControl,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
+import { useAuth0 } from '@auth0/auth0-react'
+
+import { fetchProfile } from '../hooks/use-me'
 
 import { Loader } from './loader'
 import { queryClient } from '../'
@@ -50,10 +55,16 @@ export const CheckIn = ({ open, handleClose, warId, groups }) => {
       queryClient.invalidateQueries('warDetails')
     }
   })
+  const { user: discordUser } = useAuth0()
+  const { data: me } = useQuery(
+    'me',
+    () => fetchProfile(discordUser.sub.split('|')[2]),
+    { enabled: !!discordUser?.sub }
+  )
 
   const [ign, setIgn] = useState('')
   const [level, setLevel] = useState(0)
-  const [gs,setGs] = useState(0)
+  const [gs, setGs] = useState(0)
   const [w1, setW1] = useState('')
   const [w2, setW2] = useState('')
   const [w3, setW3] = useState('')
@@ -66,7 +77,22 @@ export const CheckIn = ({ open, handleClose, warId, groups }) => {
   }
 
   const submit = () => {
-    if (ign) {
+    if (checked) {
+      checkIn({
+        id: warId,
+        checkIn: {
+          name: me.ign,
+          level: me.level,
+          gs: me.gs,
+          weapons: `${me.weapons.primary} / ${me.weapons.secondary}${
+            me.weapons.alt ? ` - ${me.weapons.alt}` : ''
+          }`,
+          armor: me.armor,
+          role,
+          pref
+        }
+      })
+    } else if (ign) {
       checkIn({
         id: warId,
         checkIn: {
@@ -101,6 +127,24 @@ export const CheckIn = ({ open, handleClose, warId, groups }) => {
     }
   }, [isSuccess])
 
+  const hasProfile = () => {
+    if (me) {
+      return (
+        me.ign &&
+        me.level &&
+        me.weapons.primary &&
+        me.weapons.secondary &&
+        me.armor
+      )
+    }
+    return false
+  }
+
+  const [checked, setChecked] = useState(false)
+  const check = (e) => {
+    setChecked(e.target.checked)
+  }
+
   return (
     <Modal open={open} onClose={close}>
       <Box
@@ -119,81 +163,106 @@ export const CheckIn = ({ open, handleClose, warId, groups }) => {
           <Loader height="300px" />
         ) : (
           <Stack spacing={2}>
-            <TextField
-              label="In Game Name"
-              variant="outlined"
-              placeholder="In Game Name"
-              value={ign}
-              onChange={handleChange}
-            />
-            <TextField
-              label="Level"
-              variant="outlined"
-              type="number"
-              placeholder="0"
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-            />
-            <TextField
-              label="Gear Score"
-              variant="outlined"
-              type="number"
-              placeholder="0"
-              value={gs}
-              onChange={(e) => setGs(e.target.value)}
-            />
-            <FormControl fullWidth>
-              <InputLabel id="w1-label">Weapon 1</InputLabel>
-              <Select
-                labelId="w1-label"
-                value={w1}
-                label="Weapon 1"
-                onChange={(e) => setW1(e.target.value)}
-              >
-                {weapons.map((w) => (
-                  <MenuItem key={w} value={w}>{w}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="w2-label">Weapon 2</InputLabel>
-              <Select
-                labelId="w2-label"
-                value={w2}
-                label="Weapon 2"
-                onChange={(e) => setW2(e.target.value)}
-              >
-                {weapons.map((w) => (
-                  <MenuItem key={w} value={w}>{w}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="w3-label">Alt Weapon 2</InputLabel>
-              <Select
-                labelId="w3-label"
-                value={w3}
-                label="Weapon 3"
-                onChange={(e) => setW3(e.target.value)}
-              >
-                {weapons.map((w) => (
-                  <MenuItem key={w} value={w}>{w}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="armor-label">Armor Type</InputLabel>
-              <Select
-                labelId="armor-label"
-                value={armor}
-                label="Armor Type"
-                onChange={(e) => setArmor(e.target.value)}
-              >
-                {armors.map((a) => (
-                  <MenuItem key={a} value={a}>{a}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {me && hasProfile() && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color="secondary"
+                    checked={checked}
+                    onChange={check}
+                  />
+                }
+                label="Use Profile"
+                sx={{ color: 'white' }}
+              />
+            )}
+            {!checked && (
+              <>
+                <TextField
+                  label="In Game Name"
+                  variant="outlined"
+                  placeholder="In Game Name"
+                  value={ign}
+                  onChange={handleChange}
+                />
+                <TextField
+                  label="Level"
+                  variant="outlined"
+                  type="number"
+                  placeholder="0"
+                  value={level}
+                  onChange={(e) => setLevel(e.target.value)}
+                />
+                <TextField
+                  label="Gear Score"
+                  variant="outlined"
+                  type="number"
+                  placeholder="0"
+                  value={gs}
+                  onChange={(e) => setGs(e.target.value)}
+                />
+                <FormControl fullWidth>
+                  <InputLabel id="w1-label">Weapon 1</InputLabel>
+                  <Select
+                    labelId="w1-label"
+                    value={w1}
+                    label="Weapon 1"
+                    onChange={(e) => setW1(e.target.value)}
+                  >
+                    {weapons.map((w) => (
+                      <MenuItem key={w} value={w}>
+                        {w}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="w2-label">Weapon 2</InputLabel>
+                  <Select
+                    labelId="w2-label"
+                    value={w2}
+                    label="Weapon 2"
+                    onChange={(e) => setW2(e.target.value)}
+                  >
+                    {weapons.map((w) => (
+                      <MenuItem key={w} value={w}>
+                        {w}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="w3-label">Alt Weapon 2</InputLabel>
+                  <Select
+                    labelId="w3-label"
+                    value={w3}
+                    label="Weapon 3"
+                    onChange={(e) => setW3(e.target.value)}
+                  >
+                    {weapons.map((w) => (
+                      <MenuItem key={w} value={w}>
+                        {w}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="armor-label">Armor Type</InputLabel>
+                  <Select
+                    labelId="armor-label"
+                    value={armor}
+                    label="Armor Type"
+                    onChange={(e) => setArmor(e.target.value)}
+                  >
+                    {armors.map((a) => (
+                      <MenuItem key={a} value={a}>
+                        {a}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            )}
             <FormControl fullWidth>
               <InputLabel id="role-label">Role</InputLabel>
               <Select
@@ -203,7 +272,9 @@ export const CheckIn = ({ open, handleClose, warId, groups }) => {
                 onChange={(e) => setRole(e.target.value)}
               >
                 {roles.map((r) => (
-                  <MenuItem key={r} value={r}>{r}</MenuItem>
+                  <MenuItem key={r} value={r}>
+                    {r}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -216,7 +287,9 @@ export const CheckIn = ({ open, handleClose, warId, groups }) => {
                 onChange={(e) => setPref(e.target.value)}
               >
                 {groups?.map((g) => (
-                  <MenuItem key={g.section} value={g.section}>{g.section}</MenuItem>
+                  <MenuItem key={g.section} value={g.section}>
+                    {g.section}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>

@@ -12,6 +12,7 @@ provider:
   region: us-east-2
   environment:
     STAGE: ${self:provider.stage}
+    STATUS_TOKEN: ${env:STATUS_TOKEN}
   # https://www.serverless.com/framework/docs/deprecations/#LAMBDA_HASHING_VERSION_V2
   lambdaHashingVersion: 20201221
   # https://www.serverless.com/framework/docs/deprecations/#AWS_API_GATEWAY_NAME_STARTING_WITH_SERVICE
@@ -53,6 +54,14 @@ functions:
       - http:
           method: any
           path: '/v1/company/{proxy+}'
+          cors: true
+  worldV1:
+    handler: handler.worldV1
+    timeout: 45
+    events:
+      - http:
+          method: any
+          path: '/v1/world/{proxy+}'
           cors: true
 
 plugins:

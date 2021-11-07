@@ -1,9 +1,18 @@
+import { useState, useEffect } from 'react'
 import { Stack, Typography, Paper } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { DataGrid } from '@mui/x-data-grid'
 
-import { useProfiles } from '../hooks/useProfiles'
+import { useProfiles } from '../hooks/use-profiles'
 import { Loader } from '../components/loader'
+
+const getCompanyAbv = (name) => {
+  let abv = ''
+  name.split(' ').forEach((word) => {
+    abv += word.charAt(0)
+  })
+  return abv
+}
 
 export const Roster = () => {
   const theme = useTheme()
@@ -21,6 +30,24 @@ export const Roster = () => {
     { field: 'alt', headerName: 'Alternative', width: 120 }
   ]
 
+  const [verified, setVerified] = useState([])
+  const [unverified, setUnverified] = useState([])
+
+  useEffect(() => {
+    if (profiles) {
+      const newVerified = []
+      const newUnverified = []
+
+      profiles.forEach((p) => {
+        if (p.verified) newVerified.push(p)
+        else newUnverified.push(p)
+      })
+
+      setVerified(newVerified)
+      setUnverified(newUnverified)
+    }
+  }, [profiles])
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -29,15 +56,15 @@ export const Roster = () => {
         <Typography variant="h3" color="text.primary">
           Roster
         </Typography>
-        <Paper sx={{ height: '70vh', backgroundColor: theme.palette.primary.main }}>
+        <Paper
+          sx={{ height: '70vh', backgroundColor: theme.palette.primary.main }}
+        >
           <DataGrid
             sx={{ height: '100%' }}
             columns={columns}
-            rows={profiles.map((p) => ({
+            rows={verified.map((p) => ({
               ...p,
-              company: `${p.company.split(' ')[0].charAt(0)}${p.company
-                .split(' ')[1]
-                .charAt(0)}${p.company.split(' ')[2].charAt(0)}`,
+              company: p.company && getCompanyAbv(p.company),
               id: p.sub,
               primary: p.weapons.primary,
               secondary: p.weapons.secondary,
@@ -46,6 +73,33 @@ export const Roster = () => {
             loading={!profiles || profiles.length === 0}
           />
         </Paper>
+        {unverified.length > 0 && (
+          <>
+            <Typography variant="h3" color="text.primary">
+              Unverified Users
+            </Typography>
+            <Paper
+              sx={{
+                height: '30vh',
+                backgroundColor: theme.palette.primary.main
+              }}
+            >
+              <DataGrid
+                sx={{ height: '100%' }}
+                columns={columns}
+                rows={unverified.map((p) => ({
+                  ...p,
+                  company: p.company && getCompanyAbv(p.company),
+                  id: p.sub,
+                  primary: p.weapons.primary,
+                  secondary: p.weapons.secondary,
+                  alt: p.weapons.alt
+                }))}
+                loading={!profiles || profiles.length === 0}
+              />
+            </Paper>
+          </>
+        )}
       </Stack>
     </Stack>
   )

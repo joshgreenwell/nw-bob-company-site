@@ -1,27 +1,43 @@
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { AppBar, Toolbar, Typography, Button, Stack } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import { useAuth0 } from '@auth0/auth0-react'
+import { useQuery } from 'react-query'
+
+import { useWorldStats } from './hooks/use-world-stats'
+import { fetchProfile } from './hooks/use-me'
 
 import { Preparation } from './views/preparation'
 import { Home } from './views/home'
 import { Profile } from './views/profile'
 import { Roster } from './views/roster'
+import { Calendar } from './views/calendar'
+import { Resources } from './views/resources'
+
 import { Loader } from './components/loader'
 import { Sidebar } from './components/sidebar'
 
-const linkStyle = {
-  color: '#fff',
-  textDecoration: 'none',
-  fontFamily: 'IM Fell DW Pica,Times,Times Roman,Times New Roman,serif'
-}
+import { queryClient } from '.'
 
 function App() {
-  const { user, loginWithRedirect, isAuthenticated, isLoading, logout } =
-    useAuth0()
+  const { user, loginWithRedirect, isAuthenticated, isLoading } = useAuth0()
+  const { isLoading: isLoadingMe, data: me } = useQuery(
+    'me',
+    () => fetchProfile(user.sub.split('|')[2]),
+    { enabled: !!user?.sub }
+  )
+  const theme = useTheme()
+
+  const { isLoading: isLoadingWorldStats, data: worldStats } = useWorldStats()
+
+  useEffect(() => {
+    queryClient.invalidateQueries('me')
+  }, [user])
 
   return (
     <Router>
-      <AppBar position="static">
+      <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <img
             src="//d2lchq0n03yu65.cloudfront.net/statics/2021-10-14/images/NW-bug.svg"
@@ -31,34 +47,32 @@ function App() {
           <Typography
             variant="h6"
             component="div"
-            sx={{ margin: '0 30px 0 15px' }}
+            sx={{ margin: '0 30px 0 15px', flexGrow: 1 }}
           >
             Band of Brothertons
           </Typography>
-          <Stack sx={{ flexGrow: 1 }} direction="row" spacing={2}>
-            <Link to="/" style={linkStyle}>
-              Home
-            </Link>
-            <Link to="/roster" style={linkStyle}>
-              Roster
-            </Link>
-            <Link to="/prep" style={linkStyle}>
-              War Prep
-            </Link>
-          </Stack>
-          {isAuthenticated ? (
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Link to="/profile" style={linkStyle}>
-                {user.nickname}
-              </Link>
-              <Button
-                onClick={() => logout({ returnTo: window.location.origin })}
-                color="inherit"
-              >
-                Log Out
-              </Button>
-            </Stack>
+          {isLoadingWorldStats ? (
+            <Loader height="50px" />
           ) : (
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <div
+                style={{
+                  backgroundColor: worldStats
+                    ? worldStats.status_enum === 'ACTIVE'
+                      ? 'green'
+                      : 'red'
+                    : 'orange',
+                  borderRadius: '50%',
+                  display: 'inlineBlock',
+                  height: '15px',
+                  width: '15px'
+                }}
+              />
+              <Typography>Samavasarana</Typography>
+            </Stack>
+          )}
+
+          {!isAuthenticated && (
             <Button onClick={() => loginWithRedirect()} color="inherit">
               Login
             </Button>
@@ -66,11 +80,12 @@ function App() {
         </Toolbar>
       </AppBar>
       <Toolbar />
+      <Toolbar />
       <Sidebar />
-      {isLoading ? (
+      {isLoading || isLoadingMe ? (
         <Loader />
       ) : (
-        <div>
+        <div style={{ marginLeft: '75px' }}>
           <Switch>
             <Route exact path="/prep">
               <Preparation />
@@ -78,8 +93,18 @@ function App() {
             <Route exact path="/profile">
               <Profile />
             </Route>
-            <Route exact path="/roster">
-              <Roster />
+            {me && me.verified && (
+              <Route exact path="/roster">
+                <Roster />
+              </Route>
+            )}
+            {me && me.verified && (
+              <Route exact path="/calendar">
+                <Calendar />
+              </Route>
+            )}
+            <Route exact path="/resources">
+              <Resources />
             </Route>
             <Route exact path="/">
               <Home />
