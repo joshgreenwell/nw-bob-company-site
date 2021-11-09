@@ -14,6 +14,7 @@ import { Profile } from './views/profile'
 import { Roster } from './views/roster'
 import { Calendar } from './views/calendar'
 import { Resources } from './views/resources'
+import { Crafting } from './views/crafting'
 
 import { Loader } from './components/loader'
 import { Sidebar } from './components/sidebar'
@@ -85,7 +86,7 @@ function App() {
       {isLoading || isLoadingMe ? (
         <Loader />
       ) : (
-        <div style={{ marginLeft: '75px' }}>
+        <div style={{ marginLeft: '75px', padding: '0 30px' }}>
           <Switch>
             <Route exact path="/prep">
               <Preparation />
@@ -96,6 +97,11 @@ function App() {
             {me && me.verified && (
               <Route exact path="/roster">
                 <Roster />
+              </Route>
+            )}
+            {me && me.verified && (
+              <Route exact path="/crafting">
+                <Crafting />
               </Route>
             )}
             {me && me.verified && (

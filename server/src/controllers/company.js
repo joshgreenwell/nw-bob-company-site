@@ -79,14 +79,15 @@ api.post('/:sub', async (req, res) => {
 
   _log.info('Returning the new profile')
   res.json({
+    sub,
     ign,
+    rank,
+    company,
     weapons,
     lf,
     skills,
     level,
     gs,
-    company,
-    rank,
     armor,
     verified
   })

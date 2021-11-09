@@ -71,7 +71,7 @@ export const defaultProfile = {
         trophies: [0, 0, 0],
         recipe: false
       },
-      jewlcrafting: {
+      jewelcrafting: {
         level: 0,
         gear: [false, false, false, false, false, false],
         trophies: [0, 0, 0],
@@ -102,5 +102,6 @@ export const defaultProfile = {
     }
   },
   level: 0,
-  gs: 0
+  gs: 0,
+  verified: false
 }

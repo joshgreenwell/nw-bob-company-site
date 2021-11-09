@@ -55,13 +55,34 @@ const SkillBubble = ({ name, skill }) => (
     alignItems="center"
     sx={{ width: 200 }}
   >
-    <Typography variant="h6" align="center" color="text.primary">{`${name
-      .charAt(0)
-      .toUpperCase()}${name.slice(1)}`}</Typography>
+    <Typography variant="h6" align="center" color="text.primary">{`${
+      name === 'tanning' ? 'Leatherworking' : name.charAt(0).toUpperCase()
+    }${name !== 'tanning' ? name.slice(1) : ''}`}</Typography>
     <AttributeCircle>
       <Typography sx={{ fontSize: 30, fontWeight: 700 }} color="text.secondary">
         {skill}
       </Typography>
+    </AttributeCircle>
+  </Stack>
+)
+
+const ESkillBubble = ({ name, value, handleNumberChange }) => (
+  <Stack
+    spacing={2}
+    justifyContent="center"
+    alignItems="center"
+    sx={{ width: 200 }}
+  >
+    <Typography variant="h6" align="center" color="text.primary">{`${
+      name === 'tanning' ? 'Leatherworking' : name.charAt(0).toUpperCase()
+    }${name !== 'tanning' ? name.slice(1) : ''}`}</Typography>
+    <AttributeCircle>
+      <TextField
+        type="number"
+        sx={{ width: '75px' }}
+        value={value}
+        onChange={handleNumberChange}
+      />
     </AttributeCircle>
   </Stack>
 )
@@ -92,6 +113,10 @@ export const Profile = () => {
   const [secondary, setSecondary] = useState()
   const [alternate, setAlternate] = useState()
 
+  const [crafting, setCrafting] = useState({})
+  const [refining, setRefining] = useState({})
+  const [gathering, setGathering] = useState({})
+
   useEffect(() => {
     if (!isAuthenticated) history.push('/')
   }, [isAuthenticated])
@@ -118,107 +143,13 @@ export const Profile = () => {
       armor,
       lf: [],
       skills: {
-        gathering: {
-          harvesting: {
-            level: 0,
-            gear: [0, 0, 0, 0, 0, 0],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          logging: {
-            level: 0,
-            gear: [0, 0, 0, 0, 0, 0],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          mining: {
-            level: 0,
-            gear: [0, 0, 0, 0, 0, 0],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          skinning: {
-            level: 0,
-            gear: [0, 0, 0, 0, 0, 0],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          fishing: {
-            level: 0,
-            gear: [0, 0, 0, 0, 0, 0],
-            trophies: [0, 0, 0],
-            recipe: false
-          }
-        },
-        crafting: {
-          furnishing: {
-            level: 0,
-            gear: [false, false, false, false, false, false],
-            recipe: false
-          },
-          armoring: {
-            level: 0,
-            gear: [false, false, false, false, false, false],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          arcana: {
-            level: 0,
-            gear: [false, false, false, false, false, false],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          engineering: {
-            level: 0,
-            gear: [false, false, false, false, false, false],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          cooking: {
-            level: 0,
-            gear: [false, false, false, false, false, false],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          weaponsmithing: {
-            level: 0,
-            gear: [false, false, false, false, false, false],
-            trophies: [0, 0, 0],
-            recipe: false
-          },
-          jewlcrafting: {
-            level: 0,
-            gear: [false, false, false, false, false, false],
-            trophies: [0, 0, 0],
-            recipe: false
-          }
-        },
-        refining: {
-          weaving: {
-            level: 0,
-            gear: [false, false, false, false, false]
-          },
-          woodworking: {
-            level: 0,
-            gear: [false, false, false, false, false]
-          },
-          smelting: {
-            level: 0,
-            gear: [false, false, false, false, false]
-          },
-          tanning: {
-            level: 0,
-            gear: [false, false, false, false, false]
-          },
-          stonecutting: {
-            level: 0,
-            gear: [false, false, false, false, false]
-          }
-        }
+        gathering,
+        crafting,
+        refining
       },
       level,
       gs,
-      verified: user.verified
+      verified: user.verified ?? false
     })
   }
 
@@ -237,6 +168,9 @@ export const Profile = () => {
         setPrimary(newUser.weapons.primary)
         setSecondary(newUser.weapons.secondary)
         setAlternate(newUser.weapons.alt)
+        setCrafting(newUser.skills.crafting)
+        setRefining(newUser.skills.refining)
+        setGathering(newUser.skills.gathering)
         setShowCreate(false)
       } else {
         setShowCreate(true)
@@ -354,6 +288,69 @@ export const Profile = () => {
           </Select>
         </Typography>
       </Stack>
+      <Typography variant="h4" color="text.primary">
+        Crafting
+      </Typography>
+      <Box sx={{ display: 'flex' }}>
+        {Object.entries(crafting).map(([key, value]) => (
+          <ESkillBubble
+            key={key}
+            name={key}
+            value={value.level}
+            handleNumberChange={(e) =>
+              setCrafting({
+                ...crafting,
+                [key]: {
+                  ...crafting[key],
+                  level: e.target.value
+                }
+              })
+            }
+          />
+        ))}
+      </Box>
+      <Typography variant="h4" color="text.primary">
+        Refining
+      </Typography>
+      <Box sx={{ display: 'flex' }}>
+        {Object.entries(refining).map(([key, value]) => (
+          <ESkillBubble
+            key={key}
+            name={key}
+            value={value.level}
+            handleNumberChange={(e) =>
+              setRefining({
+                ...refining,
+                [key]: {
+                  ...refining[key],
+                  level: e.target.value
+                }
+              })
+            }
+          />
+        ))}
+      </Box>
+      <Typography variant="h4" color="text.primary">
+        Gathering
+      </Typography>
+      <Box sx={{ display: 'flex' }}>
+        {Object.entries(gathering).map(([key, value]) => (
+          <ESkillBubble
+            key={key}
+            name={key}
+            value={value.level}
+            handleNumberChange={(e) =>
+              setGathering({
+                ...gathering,
+                [key]: {
+                  ...gathering[key],
+                  level: e.target.value
+                }
+              })
+            }
+          />
+        ))}
+      </Box>
     </>
   )
 
@@ -390,6 +387,30 @@ export const Profile = () => {
           {`Alternative Weapon: ${user.weapons.alt ?? ''}`}
         </Typography>
       </Stack>
+      <Typography variant="h4" color="text.primary">
+        Crafting
+      </Typography>
+      <Box sx={{ display: 'flex' }}>
+        {Object.entries(user.skills.crafting).map(([key, value]) => (
+          <SkillBubble key={key} name={key} skill={value.level} />
+        ))}
+      </Box>
+      <Typography variant="h4" color="text.primary">
+        Refining
+      </Typography>
+      <Box sx={{ display: 'flex' }}>
+        {Object.entries(user.skills.refining).map(([key, value]) => (
+          <SkillBubble key={key} name={key} skill={value.level} />
+        ))}
+      </Box>
+      <Typography variant="h4" color="text.primary">
+        Gathering
+      </Typography>
+      <Box sx={{ display: 'flex' }}>
+        {Object.entries(user.skills.gathering).map(([key, value]) => (
+          <SkillBubble key={key} name={key} skill={value.level} />
+        ))}
+      </Box>
     </>
   )
 
@@ -434,30 +455,6 @@ export const Profile = () => {
               )}
             </Stack>
             {editing ? editComponent : viewComponent}
-            <Typography variant="h4" color="text.primary">
-              Crafting
-            </Typography>
-            <Box sx={{ display: 'flex' }}>
-              {Object.entries(user.skills.crafting).map(([key, value]) => (
-                <SkillBubble key={key} name={key} skill={value.level} />
-              ))}
-            </Box>
-            <Typography variant="h4" color="text.primary">
-              Refining
-            </Typography>
-            <Box sx={{ display: 'flex' }}>
-              {Object.entries(user.skills.refining).map(([key, value]) => (
-                <SkillBubble key={key} name={key} skill={value.level} />
-              ))}
-            </Box>
-            <Typography variant="h4" color="text.primary">
-              Gathering
-            </Typography>
-            <Box sx={{ display: 'flex' }}>
-              {Object.entries(user.skills.gathering).map(([key, value]) => (
-                <SkillBubble key={key} name={key} skill={value.level} />
-              ))}
-            </Box>
             <Stack spacing={1}>
               <Typography variant="h4" color="text.primary">
                 Looking For

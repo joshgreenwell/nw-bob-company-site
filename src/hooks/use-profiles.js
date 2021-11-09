@@ -8,6 +8,8 @@ const fetchProfile = async () => {
     `${process.env.REACT_APP_API_URL}/company/profiles`
   )
 
+  console.log(data)
+
   return data
 }
 
@@ -15,7 +17,6 @@ export const useProfiles = () =>
   useQuery('profiles', fetchProfile, { staleTime: 5 * 60_000 })
 
 const upcertProfile = async (profile) => {
-  console.log(profile)
   const { data } = await axios.post(
     `${process.env.REACT_APP_API_URL}/company/${profile.sub}`,
     profile

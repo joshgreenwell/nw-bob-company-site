@@ -67,7 +67,7 @@ export const Sidebar = () => {
           button
           sx={{ justifyContent: 'center', alignItems: 'center' }}
           onClick={() => history.push('/crafting')}
-          disabled
+          disabled={!(me && me.verified)}
         >
           <Stack alignItems="center" justifyContent="center">
             <GiStoneBlock style={{ width: 30, height: 30 }} />
