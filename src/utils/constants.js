@@ -91,7 +91,7 @@ export const defaultProfile = {
         level: 0,
         gear: [false, false, false, false, false]
       },
-      tanning: {
+      leatherworking: {
         level: 0,
         gear: [false, false, false, false, false]
       },
