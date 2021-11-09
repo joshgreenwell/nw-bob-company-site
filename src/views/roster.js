@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Stack, Typography, Paper } from '@mui/material'
+import {
+  Stack,
+  Typography,
+  Paper,
+  Button,
+  CircularProgress
+} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { DataGrid } from '@mui/x-data-grid'
 
-import { useProfiles } from '../hooks/use-profiles'
+import { useProfiles, useProfileMutation } from '../hooks/use-profiles'
 import { Loader } from '../components/loader'
 
 const getCompanyAbv = (name) => {
@@ -17,6 +23,8 @@ const getCompanyAbv = (name) => {
 export const Roster = () => {
   const theme = useTheme()
   const { isLoading, data: profiles } = useProfiles()
+  const { isLoading: isLoadingMutate, mutateAsync: updateProfile } =
+    useProfileMutation()
 
   const columns = [
     { field: 'ign', headerName: 'Name', width: 150 },
@@ -33,6 +41,8 @@ export const Roster = () => {
   const [verified, setVerified] = useState([])
   const [unverified, setUnverified] = useState([])
 
+  const [selected, setSelected] = useState()
+
   useEffect(() => {
     if (profiles) {
       const newVerified = []
@@ -47,6 +57,17 @@ export const Roster = () => {
       setUnverified(newUnverified)
     }
   }, [profiles])
+
+  const verify = () => {
+    if (selected) {
+      updateProfile({ ...selected, verified: true })
+      setSelected(undefined)
+    }
+  }
+
+  const handleCellClick = (params) => {
+    setSelected(unverified.find((u) => u.sub === params.id))
+  }
 
   return isLoading ? (
     <Loader />
@@ -78,8 +99,27 @@ export const Roster = () => {
             <Typography variant="h3" color="text.primary">
               Unverified Users
             </Typography>
+            {localStorage.getItem('a') === 'true' && (
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography color="textPrimary">
+                  {selected?.ign ?? ''}
+                </Typography>
+                <Button
+                  variant="contained"
+                  sx={{ width: 100 }}
+                  onClick={verify}
+                >
+                  {isLoadingMutate ? (
+                    <CircularProgress color="secondary" size={22}/>
+                  ) : (
+                    'Verify'
+                  )}
+                </Button>
+              </Stack>
+            )}
             <Paper
               sx={{
+                display: 'flex',
                 height: '30vh',
                 backgroundColor: theme.palette.primary.main
               }}
@@ -95,6 +135,7 @@ export const Roster = () => {
                   secondary: p.weapons.secondary,
                   alt: p.weapons.alt
                 }))}
+                onCellClick={handleCellClick}
                 loading={!profiles || profiles.length === 0}
               />
             </Paper>
