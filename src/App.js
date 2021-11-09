@@ -85,7 +85,7 @@ function App() {
       {isLoading || isLoadingMe ? (
         <Loader />
       ) : (
-        <div style={{ marginLeft: '75px' }}>
+        <div style={{ marginLeft: '75px', padding: '15px' }}>
           <Switch>
             <Route exact path="/prep">
               <Preparation />

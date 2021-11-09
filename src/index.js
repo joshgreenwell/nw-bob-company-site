@@ -6,7 +6,7 @@ import DateAdapter from '@mui/lab/AdapterDateFns'
 import { LocalizationProvider } from '@mui/lab'
 import { Auth0Provider } from '@auth0/auth0-react'
 
-import App from './app'
+import App from './App'
 import reportWebVitals from './reportWebVitals'
 
 export const queryClient = new QueryClient()
