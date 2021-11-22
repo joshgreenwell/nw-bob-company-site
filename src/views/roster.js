@@ -110,7 +110,7 @@ export const Roster = () => {
                   onClick={verify}
                 >
                   {isLoadingMutate ? (
-                    <CircularProgress color="secondary" size={22}/>
+                    <CircularProgress color="secondary" size={22} />
                   ) : (
                     'Verify'
                   )}
@@ -125,7 +125,9 @@ export const Roster = () => {
               }}
             >
               <DataGrid
-                sx={{ height: '100%' }}
+                sx={{
+                  height: '100%'
+                }}
                 columns={columns}
                 rows={unverified.map((p) => ({
                   ...p,

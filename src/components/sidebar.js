@@ -17,7 +17,7 @@ import { queryClient } from '../'
 
 import PeopleIcon from '@mui/icons-material/People'
 import HomeIcon from '@mui/icons-material/Home'
-import { GiAncientSword, GiStoneBlock, GiSpellBook } from 'react-icons/gi'
+import { GiAncientSword, GiStoneBlock, GiSpellBook, GiScrollQuill } from 'react-icons/gi'
 import LogoutIcon from '@mui/icons-material/Logout'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 
@@ -50,6 +50,16 @@ export const Sidebar = () => {
           <Stack alignItems="center" justifyContent="center">
             <HomeIcon sx={{ width: 30, height: 30 }} />
             <Typography variant="caption">Home</Typography>
+          </Stack>
+        </ListItem>
+        <ListItem
+          button
+          sx={{ justifyContent: 'center', alignItems: 'center' }}
+          onClick={() => history.push('/about')}
+        >
+          <Stack alignItems="center" justifyContent="center">
+            <GiScrollQuill style={{ width: 30, height: 30 }} />
+            <Typography variant="caption">About</Typography>
           </Stack>
         </ListItem>
         <ListItem

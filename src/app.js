@@ -15,6 +15,7 @@ import { Roster } from './views/roster'
 import { Calendar } from './views/calendar'
 import { Resources } from './views/resources'
 import { Crafting } from './views/crafting'
+import { About } from './views/about'
 
 import { Loader } from './components/loader'
 import { Sidebar } from './components/sidebar'
@@ -90,6 +91,9 @@ function App() {
           <Switch>
             <Route exact path="/prep">
               <Preparation />
+            </Route>
+            <Route exact path="/about">
+              <About />
             </Route>
             <Route exact path="/profile">
               <Profile />

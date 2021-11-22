@@ -38,14 +38,16 @@ const weapons = [
   'Musket',
   'Ice Gauntlet',
   'Fire Staff',
-  'Life Staff'
+  'Life Staff',
+  'Void Gauntlet'
 ]
 const armors = ['Light', 'Medium', 'Heavy']
 const companies = [
   'Band of Brothertons',
   'Squad of Sistertons',
   'The Prideful',
-  'The Black Syndicate'
+  'The Black Syndicate',
+  'Alchemical Knights'
 ]
 
 const SkillBubble = ({ name, skill }) => (
